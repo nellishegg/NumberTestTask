@@ -1,7 +1,8 @@
-package com.example.numbertesttask
+package com.example.numbertesttask.main.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.numbertesttask.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
