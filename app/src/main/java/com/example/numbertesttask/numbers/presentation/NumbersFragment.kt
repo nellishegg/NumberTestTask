@@ -33,7 +33,7 @@ class NumbersFragment : Fragment() {
         view.findViewById<ProgressBar>(R.id.progressBar).visibility = View.GONE
         view.findViewById<View>(R.id.getFactButton).setOnClickListener {
             //todo refactor and remove hardcode
-                showFragment?.show(DetailsFragment.newInstance("some information about random number hardcoded"))
+                showFragment.show(DetailsFragment.newInstance("some information about random number hardcoded"))
 
         }
     }
