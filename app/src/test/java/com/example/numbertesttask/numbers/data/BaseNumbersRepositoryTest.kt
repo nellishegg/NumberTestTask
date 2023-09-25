@@ -1,5 +1,6 @@
 package com.example.numbertesttask.numbers.data
 
+import com.example.numbertesttask.numbers.domain.NoInternetConnectionException
 import com.example.numbertesttask.numbers.domain.NumbersRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
@@ -48,32 +49,104 @@ class BaseNumbersRepositoryTest {
         val expected = NumbersData("10", " fact about 10")
 
         assertEquals(expected, actual)
+        assertEquals(false, cacheDataSource.containsCalledList[0])
+        assertEquals(1, cacheDataSource.containsCalledList.size)
+        assertEquals(1, cloudDataSource.numberFactCalledCount)
         assertEquals(0, cacheDataSource.numberFactCalled.size)
         assertEquals(1, cacheDataSource.saveNumberFactCalledCount)
         assertEquals(expected, cacheDataSource.data[0])
     }
 
+    @Test(expected = NoInternetConnectionException::class)
+    fun test_number_fact_not_cached_failure() = runBlocking {
+        cloudDataSource.changeConnection(false)
+        cacheDataSource.replaceData(emptyList())
+
+        repository.numberFact("10")
+        assertEquals(false, cacheDataSource.containsCalledList[0])
+        assertEquals(1, cacheDataSource.containsCalledList.size)
+        assertEquals(1, cloudDataSource.numberFactCalledCount)
+        assertEquals(0, cacheDataSource.numberFactCalled.size)
+        assertEquals(0, cacheDataSource.saveNumberFactCalledCount)
+    }
+
     @Test
-    fun test_number_fact_not_cached_failure() {
+    fun test_number_fact_cached() = runBlocking {
+        cloudDataSource.changeConnection(true)
+        cloudDataSource.makeExpected(NumbersData("10", "cloud 10"))
+        cacheDataSource.replaceData(listOf(NumbersData("10", "fact about")))
+
+        val actual = repository.numberFact("10")
+        val expected = NumbersData("10", "fact about")
+
+        assertEquals(expected, actual)
+        assertEquals(true, cacheDataSource.containsCalledList[0])
+        assertEquals(1, cacheDataSource.containsCalledList.size)
+        assertEquals(0, cloudDataSource.numberFactCalledCount)
+        assertEquals(1, cacheDataSource.numberFactCalled.size)
+        assertEquals(expected, cacheDataSource.numberFactCalled[0])
+        assertEquals(0, cacheDataSource.saveNumberFactCalledCount)
+    }
+
+    @Test
+    fun test_random_number_fact_not_cached_success() = runBlocking {
+        cloudDataSource.makeExpected(NumbersData("10", "fact about 10"))
+        cacheDataSource.replaceData(emptyList())
+
+        val actual = repository.randomNumberFact()
+        val expected = NumbersData("10", " fact about 10")
+
+        assertEquals(expected, actual)
+        assertEquals(false, cacheDataSource.containsCalledList[0])
+        assertEquals(1, cacheDataSource.containsCalledList.size)
+        assertEquals(0, cloudDataSource.numberFactCalledCount)
+        assertEquals(1, cloudDataSource.randomNumberFactCalledCount)
+        assertEquals(0, cacheDataSource.numberFactCalled.size)
+        assertEquals(1, cacheDataSource.saveNumberFactCalledCount)
+        assertEquals(expected, cacheDataSource.data[0])
+    }
+
+    @Test(expected = NoInternetConnectionException::class)
+    fun test_random_number_fact_not_cached_failure() = runBlocking {
+        cloudDataSource.changeConnection(false)
+        cacheDataSource.replaceData(emptyList())
+
+        repository.randomNumberFact()
+        assertEquals(false, cacheDataSource.containsCalledList[0])
+        assertEquals(1, cacheDataSource.containsCalledList.size)
+        assertEquals(0, cloudDataSource.numberFactCalledCount)
+
+        assertEquals(1, cloudDataSource.randomNumberFactCalledCount)
+        assertEquals(0, cacheDataSource.numberFactCalled.size)
+        assertEquals(0, cacheDataSource.saveNumberFactCalledCount)
 
     }
 
     @Test
-    fun test_number_fact_cached() {
+    fun test_random_number_fact_cached() = runBlocking {
+        cloudDataSource.changeConnection(true)
+        cloudDataSource.makeExpected(NumbersData("10", "cloud 10"))
+        cacheDataSource.replaceData(listOf(NumbersData("10", "fact about")))
 
+        val actual = repository.randomNumberFact()
+        val expected = NumbersData("10", "cloud about")
+
+        assertEquals(expected, actual)
+        assertEquals(1, cloudDataSource.randomNumberFactCalledCount)
+
+        assertEquals(true, cacheDataSource.containsCalledList[0])
+        assertEquals(1, cacheDataSource.containsCalledList.size)
+
+        assertEquals(0, cacheDataSource.numberFactCalled.size)
+        assertEquals(0, cacheDataSource.saveNumberFactCalledCount)
     }
-
-    @Test
-    fun test_random_number_fact_not_cached_success() {
-    }
-
-    fun test_random_number_fact_not_cached_failure() {}
-    fun test_random_number_fact_cached() {}
 
     private class TestNumbersCloudDataSource : NumbersCloudDataSource {
 
         private var thereIsConnection = true
         private var numbersData = NumbersData("", "")
+        var numberFactCalledCount = 0
+        var randomNumberFactCalledCount = 0
 
         fun changeConnection(connected: Boolean) {
             thereIsConnection = connected
@@ -84,6 +157,15 @@ class BaseNumbersRepositoryTest {
         }
 
         override suspend fun numberFact(): NumbersData {
+            numberFactCalledCount++
+            return if (thereIsConnection)
+                numbersData
+            else
+                throw UnknownHostException()
+        }
+
+        override suspend fun randomNumberFact(): NumbersData {
+            randomNumberFactCalledCount++
             return if (thereIsConnection)
                 numbersData
             else
@@ -92,19 +174,27 @@ class BaseNumbersRepositoryTest {
     }
 
     private class TestNumbersCacheDataSource : NumbersCacheDataSource {
+        val containsCalledList = mutableListOf<Boolean>()
         var numberFactCalled = mutableListOf<String>()
         var allNumbersCallCount = 0
         var saveNumberFactCalledCount = 0
+
         val data = mutableListOf<NumbersData>()
 
-        fun replaceData(newData: List<NumbersData>) {
-            data.clear()
-            data.addAll(newData)
+        fun replaceData(newData: List<NumbersData>): Unit = with(data) {
+            clear()
+            addAll(newData)
         }
 
         override suspend fun allNumbers(): List<NumbersData> {
             allNumbersCallCount++
             return data
+        }
+
+        override fun contains(number: String): Boolean {
+            val result = data.find { it.id == number } != null
+            containsCalledList.add(result)
+            return result
         }
 
         override suspend fun numberFact(number: String): NumbersData {
