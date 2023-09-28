@@ -1,6 +1,7 @@
 package com.example.numbertesttask.numbers.data
 
 import com.example.numbertesttask.numbers.domain.NoInternetConnectionException
+import com.example.numbertesttask.numbers.domain.NumberFact
 import com.example.numbertesttask.numbers.domain.NumbersRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
@@ -31,8 +32,8 @@ class BaseNumbersRepositoryTest {
         )
         val actual = repository.allNumbers()
         val expected = listOf(
-            NumbersData("4", "fact of 4"),
-            NumbersData("5", "fact of 5")
+            NumberFact("4", "fact of 4"),
+            NumberFact("5", "fact of 5")
         )
         actual.forEachIndexed { index, item ->
             assertEquals(expected[index], item)
@@ -84,8 +85,8 @@ class BaseNumbersRepositoryTest {
         assertEquals(1, cacheDataSource.containsCalledList.size)
         assertEquals(0, cloudDataSource.numberFactCalledCount)
         assertEquals(1, cacheDataSource.numberFactCalled.size)
-        assertEquals(expected, cacheDataSource.numberFactCalled[0])
-        assertEquals(0, cacheDataSource.saveNumberFactCalledCount)
+        assertEquals(actual, cacheDataSource.numberFactCalled[0])
+        assertEquals(1, cacheDataSource.saveNumberFactCalledCount)
     }
 
     @Test
@@ -138,7 +139,7 @@ class BaseNumbersRepositoryTest {
         assertEquals(1, cacheDataSource.containsCalledList.size)
 
         assertEquals(0, cacheDataSource.numberFactCalled.size)
-        assertEquals(0, cacheDataSource.saveNumberFactCalledCount)
+        assertEquals(1, cacheDataSource.saveNumberFactCalledCount)
     }
 
     private class TestNumbersCloudDataSource : NumbersCloudDataSource {
