@@ -14,12 +14,12 @@ class NumberResultMapperTest : BaseTest() {
 
         mapper.map(emptyList(), "not empty message")
 
-        assertEquals(UiState.Error("not empty list"), communications.stateCalledList[0])
+        assertEquals(UiState.Error("not empty message"), communications.stateCalledList[0])
     }
 
     @Test
     fun test_success_no_list() {
-        val communications = TestNumbersCommunications()
+        val communications = BaseTest.TestNumbersCommunications()
         val mapper = NumberResultMapper(communications, NumberUiMapper())
 
         mapper.map(emptyList(), "not empty message")

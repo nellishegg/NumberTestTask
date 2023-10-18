@@ -4,7 +4,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 
 abstract class BaseTest {
-    protected class TestNumbersCommunications : NumbersCommunication{
+
+    protected class TestNumbersCommunications : NumbersCommunication {
 
         val progressCalledList = mutableListOf<Boolean>()
         val stateCalledList = mutableListOf<UiState>()
@@ -25,9 +26,7 @@ abstract class BaseTest {
         }
 
         override fun observeProgress(owner: LifecycleOwner, observer: Observer<Boolean>) = Unit
-
         override fun observeState(owner: LifecycleOwner, observer: Observer<UiState>) = Unit
-
         override fun observeList(owner: LifecycleOwner, observer: Observer<List<NumberUi>>) = Unit
     }
 }

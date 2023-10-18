@@ -6,10 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.numbertesttask.R
 import com.example.numbertesttask.numbers.domain.NumbersInteractor
-import com.example.numbertesttask.numbers.domain.NumbersResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class NumbersViewModel(
     private val handleResult: HandleNumbersRequest,
@@ -69,6 +67,4 @@ interface DispatchersList {
             return Dispatchers.Main
         }
     }
-
-
 }

@@ -15,6 +15,4 @@ data class NumbersData(
     }
     fun <T> map(mapper: Mapper<T>): T = mapper.map(id, fact)
 
-    fun matches(number: String) = number == id
-
 }
