@@ -1,6 +1,8 @@
-package com.example.numbertesttask.numbers.data
+package com.example.numbertesttask.numbers.data.cache
 
-interface NumbersCacheDataSource : FetchNumber{
+import com.example.numbertesttask.numbers.data.NumbersData
+
+interface NumbersCacheDataSource : FetchNumber {
      suspend fun allNumbers(): List<NumbersData>
 
      suspend fun contains(number: String): Boolean

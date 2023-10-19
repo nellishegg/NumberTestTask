@@ -1,7 +1,7 @@
-package com.example.numbertesttask.numbers.data
+package com.example.numbertesttask.numbers.data.cloud
 
-import java.lang.Exception
-import java.net.UnknownHostException
+import com.example.numbertesttask.numbers.data.NumbersData
+import com.example.numbertesttask.numbers.data.cache.FetchNumber
 
 interface NumbersCloudDataSource : FetchNumber {
     suspend fun randomNumber(): NumbersData

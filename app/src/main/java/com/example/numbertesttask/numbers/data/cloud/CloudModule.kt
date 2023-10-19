@@ -1,6 +1,5 @@
-package com.example.numbertesttask.numbers.data
+package com.example.numbertesttask.numbers.data.cloud
 
-import com.example.numbertesttask.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
