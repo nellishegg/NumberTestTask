@@ -199,7 +199,7 @@ class BaseNumbersRepositoryTest {
         }
 
         override suspend fun contains(number: String): Boolean {
-            val result = data.find { it.map(NumbersData.Mapper.Matches(number)) } != null
+            val result = data.find { it.map(NumbersData.Mapper.MatchesId(number)) } != null
             containsCalledList.add(result)
             return result
         }
