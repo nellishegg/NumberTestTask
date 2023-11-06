@@ -29,7 +29,7 @@ class DetailsFragment : Fragment() {
         fun newInstance(value: String) =
             DetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putString("DETAILS", value)
+                    putString("details", value)
                 }
             }
     }

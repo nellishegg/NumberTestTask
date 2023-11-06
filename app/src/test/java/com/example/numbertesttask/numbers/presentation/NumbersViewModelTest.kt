@@ -1,5 +1,6 @@
 package com.example.numbertesttask.numbers.presentation
 
+import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.example.numbertesttask.numbers.domain.NumberFact
@@ -44,11 +45,11 @@ class NumbersViewModelTest : BaseTest() {
         //2.action
         viewModel.init(isFirstRun = true)
         //3.check
-        assertEquals(true, communication.progressCalledList[0])
-        assertEquals(1, communication.progressCalledList.size)
+        assertEquals(View.VISIBLE, communication.progressCalledList[0])
+        assertEquals(1, interactor.initCalledList.size)
 
         assertEquals(2, communication.progressCalledList.size)
-        assertEquals(false, communication.progressCalledList[1])
+        assertEquals(View.GONE, communication.progressCalledList[1])
 
         assertEquals(1, communication.stateCalledList.size)
         assertEquals(true, communication.stateCalledList[0] is UiState.Success)
@@ -57,27 +58,26 @@ class NumbersViewModelTest : BaseTest() {
         assertEquals(0, communication.timesShowList)
 
 //get some data
-        interactor.changeExpectedResult(NumbersResult.Failure("No internet connection"))
+        interactor.changeExpectedResult(NumbersResult.Failure("no internet connection"))
         viewModel.fetchRandoNumberFact()
 
-        assertEquals(3, communication.progressCalledList.size)
-        assertEquals(true, communication.progressCalledList[2])
+        assertEquals(View.VISIBLE, communication.progressCalledList[2])
 
         assertEquals(1, interactor.fetchAboutRandomNumberCalledList.size)
 
 
         assertEquals(4, communication.progressCalledList.size)
-        assertEquals(false, communication.progressCalledList[3])
+        assertEquals(View.GONE, communication.progressCalledList[3])
 
         assertEquals(2, communication.stateCalledList.size)
-        assertEquals(UiState.Error("entered number is empty"), communication.stateCalledList[1])
-        assertEquals(1, communication.timesShowList)
+        assertEquals(UiState.Error("no internet connection"), communication.stateCalledList[1])
+        assertEquals(0, communication.timesShowList)
 
         viewModel.init(isFirstRun = false)
         //поворот экрана (data from livedata go right to the UI and saves the last(previous) state)
         assertEquals(4, communication.progressCalledList.size)
         assertEquals(2, communication.stateCalledList.size)
-        assertEquals(1, communication.timesShowList)
+        assertEquals(0, communication.timesShowList)
 
     }
 
@@ -103,7 +103,7 @@ class NumbersViewModelTest : BaseTest() {
         )
         viewModel.fetchNumberFact("45")
 
-        assertEquals(true, communication.progressCalledList[0])
+        assertEquals(View.VISIBLE, communication.progressCalledList[0])
 
         assertEquals(1, interactor.fetchAboutNumberCalledList.size)
 
@@ -113,7 +113,7 @@ class NumbersViewModelTest : BaseTest() {
         )
 
         assertEquals(2, communication.progressCalledList.size)
-        assertEquals(false, communication.progressCalledList[1])
+        assertEquals(View.GONE, communication.progressCalledList[1])
 
         assertEquals(1, communication.stateCalledList.size)
         assertEquals(true, communication.stateCalledList[0] is UiState.Success)

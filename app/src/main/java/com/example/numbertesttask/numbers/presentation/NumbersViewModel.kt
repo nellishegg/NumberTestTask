@@ -14,9 +14,9 @@ class NumbersViewModel(
     private val manageResources: ManageResources,
     private val communications: NumbersCommunication,
     private val interactor: NumbersInteractor
-) : ViewModel(), FetchNumbers, ObserveNumbers {
+) : ViewModel(), FetchNumbers, ObserveNumbers,ClearError {
 
-    override fun observeProgress(owner: LifecycleOwner, observer: Observer<Boolean>) =
+    override fun observeProgress(owner: LifecycleOwner, observer: Observer<Int>) =
         communications.observeProgress(owner, observer)
 
     override fun observeState(owner: LifecycleOwner, observer: Observer<UiState>) =
@@ -32,7 +32,6 @@ class NumbersViewModel(
             }
         }
     }
-
     override fun fetchRandoNumberFact() = handleResult.handle(viewModelScope) {
         interactor.factAboutRandomNumber()
     }
@@ -45,6 +44,9 @@ class NumbersViewModel(
                 interactor.factAboutNumber(number)
             }
     }
+    override fun clearError() {
+        communications.showState(UiState.ClearError())
+    }
 }
 
 
@@ -52,6 +54,10 @@ interface FetchNumbers {
     fun init(isFirstRun: Boolean)
     fun fetchRandoNumberFact()
     fun fetchNumberFact(number: String)
+}
+
+interface ClearError{
+    fun clearError()
 }
 
 interface DispatchersList {
