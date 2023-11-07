@@ -38,7 +38,7 @@ class NumbersViewModel(
 
     override fun fetchNumberFact(number: String) {
         if (number.isEmpty()) {
-            communications.showState((UiState.Error(manageResources.string(R.string.empty_number_error_message))))
+            communications.showState((UiState.ShowError(manageResources.string(R.string.empty_number_error_message))))
         } else
             handleResult.handle(viewModelScope) {
                 interactor.factAboutNumber(number)

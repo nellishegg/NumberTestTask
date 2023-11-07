@@ -1,8 +1,6 @@
 package com.example.numbertesttask.numbers.presentation
 
 import android.view.View
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.example.numbertesttask.numbers.domain.NumberFact
 import com.example.numbertesttask.numbers.domain.NumberUiMapper
 import com.example.numbertesttask.numbers.domain.NumbersInteractor
@@ -70,7 +68,7 @@ class NumbersViewModelTest : BaseTest() {
         assertEquals(View.GONE, communication.progressCalledList[3])
 
         assertEquals(2, communication.stateCalledList.size)
-        assertEquals(UiState.Error("no internet connection"), communication.stateCalledList[1])
+        assertEquals(UiState.ShowError("no internet connection"), communication.stateCalledList[1])
         assertEquals(0, communication.timesShowList)
 
         viewModel.init(isFirstRun = false)
@@ -120,6 +118,15 @@ class NumbersViewModelTest : BaseTest() {
 
         assertEquals(1, communication.timesShowList)
         assertEquals(NumberUi("45", "fact about 45"), communication.numbersList[0])
+    }
+
+    @Test
+    fun `test clear error`(){
+        viewModel.clearError()
+
+        assertEquals(1, communication.stateCalledList.size)
+        assertEquals(true, communication.stateCalledList[0] is UiState.ClearError)
+
     }
 
     private class TestManageResources : ManageResources {

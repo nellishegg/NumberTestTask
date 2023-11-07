@@ -27,6 +27,6 @@ sealed class UiState {
         }
     }
 
-    data class Error(private val text: String) : AbstractError(text, true)
+    data class ShowError(private val text: String) : AbstractError(text, true)
     class ClearError() : AbstractError("", false)
 }

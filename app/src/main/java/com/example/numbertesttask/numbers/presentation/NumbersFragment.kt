@@ -20,7 +20,7 @@ import com.google.android.material.textfield.TextInputLayout
 class NumbersFragment : Fragment() {
 
     private var showFragment: ShowFragment = ShowFragment.Empty()
-    private lateinit var viewModel: NumbersViewModel
+    private lateinit var viewModel: NumbersViewModel //todo init viewModel
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is ShowFragment)
@@ -65,11 +65,10 @@ class NumbersFragment : Fragment() {
         randomButton.setOnClickListener {
             viewModel.fetchRandoNumberFact()
         }
-
         viewModel.observeState(this) {
-//            it.apply { inputLayout ,inputEditText }
-
+            it.apply(inputLayout, inputEditText)
         }
+
         viewModel.observeList(this) {
             adapter.map(it)
 
