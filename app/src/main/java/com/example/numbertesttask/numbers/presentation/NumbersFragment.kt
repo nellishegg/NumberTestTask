@@ -13,7 +13,9 @@ import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.numbertesttask.R
+import com.example.numbertesttask.details.presentation.DetailsFragment
 import com.example.numbertesttask.main.presentation.ShowFragment
+import com.example.numbertesttask.main.presentation.sl.ProvideViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -25,6 +27,14 @@ class NumbersFragment : Fragment() {
         super.onAttach(context)
         if (context is ShowFragment)
             showFragment = context as ShowFragment
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = (requireActivity() as ProvideViewModel).provideViewModel(
+            NumbersViewModel::class.java,
+            this
+        )
     }
 
     override fun onCreateView(
@@ -41,18 +51,17 @@ class NumbersFragment : Fragment() {
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val factButton = view.findViewById<Button>(R.id.getFactButton)
         val randomButton = view.findViewById<Button>(R.id.randomFactButton)
-        val inputLayout= view.findViewById<TextInputLayout>(R.id.textInputLayout)
+        val inputLayout = view.findViewById<TextInputLayout>(R.id.textInputLayout)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         val inputEditText = view.findViewById<TextInputEditText>(R.id.editText)
         val adapter = NumbersAdapter(object : ClickListener {
+            override fun click(item: NumberUi) =
+                showFragment.show(DetailsFragment.newInstance(item.ui()))
 
-            override fun click(item: NumberUi) {
-               // todo move to the next screen  showFragment.show(DetailsFragment.newInstance("some information about random number hardcoded"))
-            }
         })
         recyclerView.adapter == adapter
 
-        inputEditText.addTextChangedListener(object: SimpleTextWatcher(){
+        inputEditText.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
                 super.afterTextChanged(s)
                 viewModel.clearError()
@@ -86,10 +95,11 @@ class NumbersFragment : Fragment() {
         showFragment = ShowFragment.Empty()
     }
 }
-abstract class SimpleTextWatcher: TextWatcher{
+
+abstract class SimpleTextWatcher : TextWatcher {
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
 
-    override fun afterTextChanged(s: Editable?)= Unit
+    override fun afterTextChanged(s: Editable?) = Unit
 }

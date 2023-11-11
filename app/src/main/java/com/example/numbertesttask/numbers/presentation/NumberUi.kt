@@ -5,6 +5,7 @@ import android.widget.TextView
 data class NumberUi(private val id: String, private val fact: String):Mapper<Boolean,NumberUi> {
 
     //todo 1 more method (concat with n/n/), then mapper interface
+    fun ui() = "$id\n\n$fact"
     fun map(head: TextView, subTitle: TextView) {
         head.text = id
         subTitle.text = fact
