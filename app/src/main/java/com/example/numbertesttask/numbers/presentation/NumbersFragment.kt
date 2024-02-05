@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,12 +55,13 @@ class NumbersFragment : Fragment() {
         val inputLayout = view.findViewById<TextInputLayout>(R.id.textInputLayout)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         val inputEditText = view.findViewById<TextInputEditText>(R.id.editText)
+        val mapper = DetailsUi()
         val adapter = NumbersAdapter(object : ClickListener {
             override fun click(item: NumberUi) =
-                showFragment.show(DetailsFragment.newInstance(item.ui()))
+                showFragment.show(DetailsFragment.newInstance(item.map(mapper)))
 
         })
-        recyclerView.adapter == adapter
+        recyclerView.adapter = adapter
 
         inputEditText.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
@@ -79,15 +81,14 @@ class NumbersFragment : Fragment() {
         }
 
         viewModel.observeList(this) {
+            Log.d("MyHelper", "list: $it")
             adapter.map(it)
-
         }
         viewModel.observeProgress(this) {
             progressBar.visibility = it
         }
 
         viewModel.init(savedInstanceState == null)
-
     }
 
     override fun onDetach() {

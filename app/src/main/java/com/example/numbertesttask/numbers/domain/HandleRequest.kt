@@ -9,7 +9,6 @@ interface HandleRequest {
     ) : HandleRequest {
         override suspend fun handle(block: suspend () -> Unit) = try {
             block.invoke()
-                repository.randomNumberFact()
             NumbersResult.Success(repository.allNumbers())
             } catch (e: Exception) {
             NumbersResult.Failure(handleError.handle(e))

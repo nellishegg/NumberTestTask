@@ -1,5 +1,6 @@
 package com.example.numbertesttask.numbers.presentation
 
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.viewModelScope
 import com.example.numbertesttask.numbers.domain.NumbersResult

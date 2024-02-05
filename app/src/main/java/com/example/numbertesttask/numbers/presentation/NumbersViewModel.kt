@@ -1,5 +1,6 @@
 package com.example.numbertesttask.numbers.presentation
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -14,29 +15,30 @@ class NumbersViewModel(
     private val manageResources: ManageResources,
     private val communications: NumbersCommunication,
     private val interactor: NumbersInteractor
-) : ViewModel(), FetchNumbers, ObserveNumbers,ClearError {
+) : ViewModel() {
 
-    override fun observeProgress(owner: LifecycleOwner, observer: Observer<Int>) =
+    fun observeProgress(owner: LifecycleOwner, observer: Observer<Int>) =
         communications.observeProgress(owner, observer)
 
-    override fun observeState(owner: LifecycleOwner, observer: Observer<UiState>) =
+    fun observeState(owner: LifecycleOwner, observer: Observer<UiState>) =
         communications.observeState(owner, observer)
 
-    override fun observeList(owner: LifecycleOwner, observer: Observer<List<NumberUi>>) =
+    fun observeList(owner: LifecycleOwner, observer: Observer<List<NumberUi>>) =
         communications.observeList(owner, observer)
 
-    override fun init(isFirstRun: Boolean) {
+    fun init(isFirstRun: Boolean) {
         if (isFirstRun) {
             handleResult.handle(viewModelScope) {
                 interactor.init()
             }
         }
     }
-    override fun fetchRandoNumberFact() = handleResult.handle(viewModelScope) {
+
+    fun fetchRandoNumberFact() = handleResult.handle(viewModelScope) {
         interactor.factAboutRandomNumber()
     }
 
-    override fun fetchNumberFact(number: String) {
+    fun fetchNumberFact(number: String) {
         if (number.isEmpty()) {
             communications.showState((UiState.ShowError(manageResources.string(R.string.empty_number_error_message))))
         } else
@@ -44,7 +46,8 @@ class NumbersViewModel(
                 interactor.factAboutNumber(number)
             }
     }
-    override fun clearError() {
+
+    fun clearError() {
         communications.showState(UiState.ClearError())
     }
 }
@@ -56,7 +59,7 @@ interface FetchNumbers {
     fun fetchNumberFact(number: String)
 }
 
-interface ClearError{
+interface ClearError {
     fun clearError()
 }
 

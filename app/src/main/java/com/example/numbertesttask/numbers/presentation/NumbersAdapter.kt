@@ -23,7 +23,6 @@ class NumbersAdapter(private val clickListener: ClickListener) :
 
     override fun getItemCount() = list.size
     override fun map(source: List<NumberUi>) {
-
         val diff = DiffUtilCallback(list, source)
         val result = DiffUtil.calculateDiff(diff)
         list.clear()
@@ -36,8 +35,9 @@ class NumbersViewHolder(view: View, private val clickListener: ClickListener) :
     RecyclerView.ViewHolder(view) {
     private val title = itemView.findViewById<TextView>(R.id.titleTextView)
     private val subTitle = itemView.findViewById<TextView>(R.id.subTitleTextView)
+    private val mapper = ListItemUi(title,subTitle)
     fun bind(model: NumberUi) {
-        model.map(title, subTitle)
+        model.map(mapper)
         itemView.setOnClickListener {
             clickListener.click(model)
         }

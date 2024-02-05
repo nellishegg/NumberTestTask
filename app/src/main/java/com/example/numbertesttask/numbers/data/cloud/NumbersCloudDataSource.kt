@@ -1,5 +1,6 @@
 package com.example.numbertesttask.numbers.data.cloud
 
+import android.util.Log
 import com.example.numbertesttask.numbers.data.NumbersData
 import com.example.numbertesttask.numbers.data.cache.FetchNumber
 
@@ -23,6 +24,7 @@ interface NumbersCloudDataSource : FetchNumber {
 
         override suspend fun number(number: String): NumbersData {
             val fact = service.fact(number)
+            Log.d("MyHelper", "number $number - fact: $fact")
             return NumbersData(number, fact)
         }
 
